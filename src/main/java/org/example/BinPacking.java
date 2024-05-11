@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.example.model.Bin;
 import org.example.model.Node;
@@ -77,11 +78,7 @@ public class BinPacking {
   }
 
   List<Bin> clone(List<Bin> bins) {
-    List<Bin> clonedList = new ArrayList<>();
-    for (Bin bin : bins) {
-      clonedList.add(bin.clone());
-    }
-    return clonedList;
+    return bins.stream().map(Bin::clone).collect(Collectors.toList());
   }
 
   int[] sortReversed(int[] arr) {
