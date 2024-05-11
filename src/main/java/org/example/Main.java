@@ -1,28 +1,43 @@
 package org.example;
 
-import java.util.List;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Random;
-import org.example.model.Bin;
 
 public class Main {
+
+  private static final int BIN_CAPACITY = 10;
+  private static final int MIN_ELEMENTS = 1000;
+  private static final int MAX_ELEMENTS = 200000;
+  private static final int STEP = 1000;
+
   public static void main(String[] args) {
-    //        int[] weights = {51, 28, 28, 28, 27, 25, 12, 12, 10, 10, 10, 10, 10, 10, 10, 10};
-    int[] weights = new Random().ints(100000, 1, 100).toArray();
+    BinPacking binPacking = new BinPacking();
+    Random random = new Random();
 
-    int binCapacity = 100;
+    try (PrintWriter writer = new PrintWriter(new FileWriter("output.txt"))) {
+      writer.println("number_of_elements;time_taken;memory_used");
+      for (int i = MIN_ELEMENTS; i <= MAX_ELEMENTS; i += STEP) {
+        int[] weights = random.ints(i, 1, 10).toArray();
 
-    //            int[] weights = {44, 24, 24, 22, 21, 17, 8, 8, 6, 6};
-    //            int binCapacity = 61;
+        Runtime runtime = Runtime.getRuntime();
+        long memoryBefore = runtime.totalMemory() - runtime.freeMemory();
 
-    var ffd = new BinPacking();
+        long startTime = System.nanoTime();
+        binPacking.firstFitDecreasing(weights, BIN_CAPACITY);
+        long endTime = System.nanoTime();
 
-    Long start = System.nanoTime();
-    //        ffd.printResults(ffd.firstFitDecreasing(weights, binCapacity));
-    List<Bin> bins = ffd.firstFitDecreasing(weights, binCapacity);
-    Long end = System.nanoTime();
-    System.out.println(end - start);
-    System.out.println(bins.size());
+        long memoryAfter = runtime.totalMemory() - runtime.freeMemory();
 
-    //        ffd.printResults(ffd.branchAndBound(weights, binCapacity));
+        long duration = endTime - startTime;
+        long memoryUsed = memoryAfter - memoryBefore;
+
+        System.out.println(i + ";" + duration + ";" + memoryUsed);
+        writer.println(i + ";" + duration + ";" + memoryUsed);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }
