@@ -5,62 +5,20 @@ import java.util.stream.IntStream;
 
 public class Main {
 
-  public static class Bin {
-    int capacity;
-    List<Integer> items;
+  public static void main(String[] args) {
+    int[] weights = {51, 28, 28, 28, 27, 25, 12, 12, 10, 10, 10, 10, 10, 10, 10, 10};
+    int binCapacity = 76;
 
-    Bin(int capacity) {
-      this.capacity = capacity;
-      this.items = new ArrayList<>();
-    }
+    //    int[] weights = {44, 24, 24, 22, 21, 17, 8, 8, 6, 6};
+    //    int binCapacity = 61;
 
-    boolean canFit(int item) {
-      return item <= capacity;
-    }
+    printResults(firstFitDecreasing(weights, binCapacity));
 
-    void add(int item) {
-      items.add(item);
-      capacity -= item;
-    }
-  }
+    //    int bruteForceBinPacking = bruteForceBinPacking(weights, binCapacity);
+    //    System.out.println("Brute Force: " + bruteForceBinPacking);
 
-  static class Node {
-    int level;
-    int numBins;
-    int[] binRemain;
-
-    Node(int level, int numBins, int[] binRemain) {
-      this.level = level;
-      this.numBins = numBins;
-      this.binRemain = binRemain.clone();
-    }
-  }
-
-  static int branchAndBound(int[] weights, int binCapacity) {
-    Arrays.sort(weights);
-    int n = weights.length;
-    PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> b.level - a.level);
-    pq.add(new Node(-1, 0, new int[n]));
-    int res = n;
-    while (!pq.isEmpty()) {
-      Node node = pq.poll();
-      if (node.level == n - 1) {
-        res = Math.min(res, node.numBins);
-      } else {
-        for (int i = 0; i < node.numBins; i++) {
-          if (node.binRemain[i] >= weights[node.level + 1]) {
-            node.binRemain[i] -= weights[node.level + 1];
-            pq.add(new Node(node.level + 1, node.numBins, node.binRemain));
-            node.binRemain[i] += weights[node.level + 1];
-          }
-        }
-        if (node.numBins + 1 < res) {
-          node.binRemain[node.numBins] = binCapacity - weights[node.level + 1];
-          pq.add(new Node(node.level + 1, node.numBins + 1, node.binRemain));
-        }
-      }
-    }
-    return res;
+    var branchAndBound = branchAndBound(weights, binCapacity);
+    System.out.println("Branch and Bound: " + branchAndBound);
   }
 
   private static List<Bin> firstFit(int[] weights, int binCapacity) {
@@ -95,6 +53,33 @@ public class Main {
   public static int[] sortReversed(int[] arr) {
     Arrays.parallelSort(arr);
     return IntStream.range(0, arr.length).map(i -> arr[arr.length - 1 - i]).toArray();
+  }
+
+  static int branchAndBound(int[] weights, int binCapacity) {
+    Arrays.sort(weights);
+    int n = weights.length;
+    PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> b.level - a.level);
+    pq.add(new Node(-1, 0, new int[n]));
+    int res = n;
+    while (!pq.isEmpty()) {
+      Node node = pq.poll();
+      if (node.level == n - 1) {
+        res = Math.min(res, node.numBins);
+      } else {
+        for (int i = 0; i < node.numBins; i++) {
+          if (node.binRemain[i] >= weights[node.level + 1]) {
+            node.binRemain[i] -= weights[node.level + 1];
+            pq.add(new Node(node.level + 1, node.numBins, node.binRemain));
+            node.binRemain[i] += weights[node.level + 1];
+          }
+        }
+        if (node.numBins + 1 < res) {
+          node.binRemain[node.numBins] = binCapacity - weights[node.level + 1];
+          pq.add(new Node(node.level + 1, node.numBins + 1, node.binRemain));
+        }
+      }
+    }
+    return res;
   }
 
   private static int bruteForceBinPacking(int[] weights, int binCapacity) {
@@ -140,21 +125,5 @@ public class Main {
     for (int i = 0; i < result.size(); i++) {
       System.out.println((i + 1) + " bin contains: " + result.get(i).items);
     }
-  }
-
-  public static void main(String[] args) {
-    int[] weights = {51, 28, 28, 28, 27, 25, 12, 12, 10, 10, 10, 10, 10, 10, 10, 10};
-    int binCapacity = 76;
-
-    //    int[] weights = {44, 24, 24, 22, 21, 17, 8, 8, 6, 6};
-    //    int binCapacity = 61;
-
-    printResults(firstFitDecreasing(weights, binCapacity));
-
-    int bruteForceBinPacking = bruteForceBinPacking(weights, binCapacity);
-    System.out.println("Brute Force: " + bruteForceBinPacking);
-
-    var branchAndBound = branchAndBound(weights, binCapacity);
-    System.out.println("Branch and Bound: " + branchAndBound);
   }
 }
