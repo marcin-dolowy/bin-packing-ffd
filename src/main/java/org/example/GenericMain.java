@@ -99,7 +99,7 @@ public class GenericMain {
   }
 
   public static void main(String[] args) {
-    Double[] doubleWeights = {0.9, 0.2, 0.2, 0.9, 0.4, 0.6, 0.5};
+    Double[] doubleWeights = {0.5, 0.7, 0.5, 0.2, 0.4, 0.2, 0.5, 0.1, 0.6};
     double doubleBinCapacity = 1d;
     List<Bin<Double>> doubleBinResult = firstFitDecreasing(doubleWeights, doubleBinCapacity);
     printResults(doubleBinResult);
