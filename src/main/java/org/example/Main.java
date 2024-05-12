@@ -13,6 +13,7 @@ public class Main {
   private static final int STEP = 1000;
 
   public static void main(String[] args) {
+
     BinPacking binPacking = new BinPacking();
     Random random = new Random();
 
@@ -38,7 +39,7 @@ public class Main {
         writer.println(i + ";" + duration + ";" + memoryUsed);
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      System.out.println("Error writing to file: " + e.getMessage());
     }
   }
 }

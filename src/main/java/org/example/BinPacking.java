@@ -10,10 +10,20 @@ public class BinPacking {
 
   public BinPacking() {}
 
-  List<Bin> firstFit(int[] weights, int binCapacity) {
+  List<Bin> firstFitDecreasing(int[] weights, int binCapacity) {
+    int[] sorted = sortReversed(weights);
+    return firstFit(sorted, binCapacity);
+  }
+
+  private List<Bin> firstFit(int[] weights, int binCapacity) {
     List<Bin> bins = new ArrayList<>();
 
     for (int weight : weights) {
+      if (weight > binCapacity) {
+        System.out.printf(
+            "Item with weight %d is larger than the bin size %d", weight, binCapacity);
+        break;
+      }
       boolean placed = false;
 
       for (Bin bin : bins) {
@@ -34,17 +44,12 @@ public class BinPacking {
     return bins;
   }
 
-  List<Bin> firstFitDecreasing(int[] weights, int binCapacity) {
-    int[] sorted = sortReversed(weights);
-    return firstFit(sorted, binCapacity);
-  }
+  List<Bin> branchAndBound(int[] weights, int binCapacity) {
+    sortReversed(weights);
 
-  List<Bin> branchAndBound(int[] items, int binCapacity) {
-    sortReversed(items);
-
-    int n = items.length;
+    int n = weights.length;
     PriorityQueue<Node> pq = new PriorityQueue<>(Node::compare);
-    List<Bin> resultBins = new ArrayList<>();
+    List<Bin> result = new ArrayList<>();
 
     pq.add(new Node(-1, new ArrayList<>()));
     int res = n;
@@ -53,9 +58,9 @@ public class BinPacking {
       Node node = pq.poll();
       if (node.level() == n - 1) {
         res = Math.min(res, node.bins().size());
-        resultBins = clone(node.bins());
+        result = clone(node.bins());
       } else {
-        int nextItem = items[node.level() + 1];
+        int nextItem = weights[node.level() + 1];
         for (int i = 0; i < node.bins().size(); i++) {
           Bin bin = node.bins().get(i);
           if (bin.capacity() >= nextItem) {
@@ -67,23 +72,23 @@ public class BinPacking {
         if (node.bins().size() + 1 < res) {
           Bin newBin = new Bin(binCapacity);
           newBin.add(nextItem);
-          List<Bin> clonedListOfBins = clone(node.bins());
-          clonedListOfBins.add(newBin);
-          pq.add(new Node(node.level() + 1, clonedListOfBins));
+          List<Bin> clonedBins = clone(node.bins());
+          clonedBins.add(newBin);
+          pq.add(new Node(node.level() + 1, clonedBins));
         }
       }
     }
 
-    return resultBins;
+    return result;
   }
 
-  List<Bin> clone(List<Bin> bins) {
-    return bins.stream().map(Bin::clone).collect(Collectors.toList());
-  }
-
-  int[] sortReversed(int[] arr) {
+  private int[] sortReversed(int[] arr) {
     Arrays.parallelSort(arr);
     return IntStream.range(0, arr.length).map(i -> arr[arr.length - 1 - i]).toArray();
+  }
+
+  private List<Bin> clone(List<Bin> bins) {
+    return bins.stream().map(Bin::clone).collect(Collectors.toList());
   }
 
   void printResults(List<Bin> result) {
