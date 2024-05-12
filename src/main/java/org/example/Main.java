@@ -22,6 +22,7 @@ public class Main {
         int[] weights = random.ints(i, 1, 10).toArray();
 
         Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
         long memoryBefore = runtime.totalMemory() - runtime.freeMemory();
 
         long startTime = System.nanoTime();
