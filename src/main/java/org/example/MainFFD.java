@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
 
-public class Main {
+public class MainFFD {
 
   private static final int BIN_CAPACITY = 10;
   private static final int MIN_ELEMENTS = 1000;
