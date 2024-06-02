@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
 
-public class MainBaD {
+public class MainBranchAndBound {
   private static final int BIN_CAPACITY = 10;
   private static final int MIN_ELEMENTS = 5;
   private static final int MAX_ELEMENTS = 21;
@@ -14,7 +14,7 @@ public class MainBaD {
   public static void main(String[] args) {
 
     BinPacking binPacking = new BinPacking();
-    Random random = new Random();
+    DataGenerator dataGenerator = new DataGenerator(new Random());
 
     try (PrintWriter writer = new PrintWriter(new FileWriter("output_branch_and_bound.txt"))) {
       writer.println("number_of_elements;time_taken;memory_used");
@@ -25,7 +25,7 @@ public class MainBaD {
 
         for (int j = 0; j < 100; j++) {
 
-          int[] weights = random.ints(i, 1, 10).toArray();
+          int[] weights = dataGenerator.generate(i, 1, 10);
 
           Runtime runtime = Runtime.getRuntime();
           runtime.gc();

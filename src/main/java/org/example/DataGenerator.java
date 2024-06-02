@@ -2,7 +2,6 @@ package org.example;
 
 import java.util.Random;
 
-@SuppressWarnings("unused")
 public class DataGenerator {
   private final Random random;
 
