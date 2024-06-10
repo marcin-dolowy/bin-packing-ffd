@@ -24,7 +24,7 @@ public class BinPackingExamples {
     compareAlgorithms(example2, 76);
   }
 
-  public void compareAlgorithms(int[] weights, int binCapacity) {
+  private void compareAlgorithms(int[] weights, int binCapacity) {
     System.out.println("Elements: " + Arrays.toString(example1));
     System.out.println("Bin capacity: " + binCapacity);
 
